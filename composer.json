@@ -1,0 +1,56 @@
+{
+    "name": "devinweb/laravel-youcan-pay",
+    "description": "YouCanPay packages for Laravel that provides an easy way to reach the best experience.",
+    "keywords": [
+        "devinweb",
+        "laravel-youcan-pay"
+    ],
+    "homepage": "https://github.com/devinweb/laravel-youcan-pay",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "DARBAOUI Imad",
+            "email": "imad@devinweb.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0",
+        "illuminate/support": "^7.0|^8.0",
+        "laravel/framework": "8.*",
+        "youcanpay/payment-sdk": "*"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.0",
+        "phpunit/phpunit": "^9.0",
+        "vimeo/psalm": "^4.30"
+    },
+    "autoload": {
+        "psr-4": {
+            "Devinweb\\LaravelYoucanPay\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Devinweb\\LaravelYoucanPay\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Devinweb\\LaravelYoucanPay\\Providers\\LaravelYoucanPayServiceProvider"
+            ],
+            "aliases": {
+                "LaravelYoucanPay": "Devinweb\\LaravelYoucanPay\\Facades\\LaravelYoucanPay"
+            }
+        }
+    }
+}
