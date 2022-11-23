@@ -66,6 +66,13 @@ class LaravelYoucanPay
     private $customer_info;
 
     /**
+     * The default customer model class name.
+     *
+     * @var string
+     */
+    public static $customerModel = 'App\\Models\\User';
+
+    /**
      * Create a new LaravelYouCanPay instance.
      *
      * @return void
@@ -114,6 +121,16 @@ class LaravelYoucanPay
         return $this;
     }
 
+    /**
+     * Set the customer model class name.
+     *
+     * @param  string  $customerModel
+     * @return void
+     */
+    public static function useCustomerModel($customerModel)
+    {
+        static::$customerModel = $customerModel;
+    }
 
     /**
      * Set the customer data
