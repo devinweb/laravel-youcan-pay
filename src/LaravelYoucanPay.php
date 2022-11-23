@@ -95,7 +95,7 @@ class LaravelYoucanPay
      *
      * @param array $paramters
      * @param \Illuminate\Http\Request $request
-     * @return void
+     * @return $this
      */
     public function createTokenization(array $attributes, Request $request)
     {
@@ -127,9 +127,20 @@ class LaravelYoucanPay
      * @param  string  $customerModel
      * @return void
      */
-    public static function useCustomerModel($customerModel)
+    public function useCustomerModel($customerModel)
     {
-        static::$customerModel = $customerModel;
+        $this->customerModel = $customerModel;
+    }
+
+    /**
+     * Get the customer instance by its YouCanPay ID.
+     *
+     * @param  string|null  $orderId
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function findBillable($orderId)
+    {
+        return $orderId ? (new $this->customerModel)->where('order_id', $orderId)->first() : null;
     }
 
     /**

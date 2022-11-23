@@ -11,7 +11,14 @@
 
 - [Introduction](#Introduction)
 - [Installation](#Installation)
+- [Database Migrations](#Database-Migrations)
 - [Configuration](#configuration)
+  - [Billable Model](#Billable-Model)
+  - [YouCanPay Keys](#YouCanPay-Keys)
+- [Customers](#Customers)
+  - [Retrieving Customers](#Retrieving-Customers)
+  - [Generate Token](#Generate-Token)
+  - [Generate Payment URL](#Generate-Payment-URL)
 - [Usage](#Usage)
   - [Tokenization](#Create-a-payment)
     - [Get Token id](#Get-token-id)
@@ -36,6 +43,20 @@ You can install the package via composer:
 composer require devinweb/laravel-youcan-pay
 ```
 
+## Database Migrations
+
+LaravelYouCanPay package provides it's own database to manage the user transactions in different steps, the migrations will create a new `transactions` table to hold all your user's transactions.
+
+```shell
+php artisan migrate
+```
+
+If you need to overwrite the migrations that ship with LaravelYouCanPay, you can publish them using the vendor:publish Artisan command:
+
+```shell
+php artisan vendor:publish --tag="youcanpay-migrations"
+```
+
 ## Configuration
 
 To publish the config file you can use the command
@@ -46,7 +67,63 @@ php artisan vendor:publish --tag="youcanpay-config"
 
 then you can find the config file in `config/youcanpay.php`
 
-## YouCanPay Keys
+### Billable Model
+
+If you want the package manage the transactions based on the user model, add the `Billable` trait to your user model.
+This trait provides various methods to allow to perform transaction tasks, such as creating a transaction, get `paid`, `failed` and `pending` transactions
+
+```php
+use Devinweb\LaravelYoucanPay\Traits\Billable;
+
+class User extends Authenticatable
+{
+    use Billable;
+}
+```
+
+LaravelYoucanPay assumes your user model will be `App\Models\User`, if you use different user model namespace you should specify it using the method `useCustomerModel` method.
+This method should typically be called in the boot method of your `AppServiceProvider` class
+
+```php
+use App\Models\Core\User;
+use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
+
+/**
+ * Bootstrap any application services.
+ *
+ * @return void
+ */
+public function boot()
+{
+    LaravelYoucanPay::useCustomerModel(User::class);
+}
+```
+
+If you need in each transaction the package uses the billing data for each user, make sure to include a `getCustomerInfo()` method in your user model, which return an array that contains all the data we need.
+
+```php
+
+/**
+ * Get the customer info to send them when we generate the form token.
+ *
+ * @return array
+ */
+public function getCustomerInfo()
+{
+    return [
+      'name'         => $this->name,
+      'address'      => '',
+      'zip_code'     => '',
+      'city'         => '',
+      'state'        => '',
+      'country_code' => 'MA',
+      'phone'        => $this->phone,
+      'email'        => $this->email,
+    ];
+}
+```
+
+### YouCanPay Keys
 
 Next, you should configure your environment in your application's `.env`
 
@@ -59,6 +136,58 @@ CURRENCY=MAD
 SUCCCESS_REDIRECT_URI=
 FAIL_REDIRECT_URI=
 ```
+
+## Customers
+
+### Retrieving Customers
+
+You can retrieve a customer by their YouCanPay ID using the `findBillable` method. This method will return an instance of the billable model:
+
+```php
+
+use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
+
+$user = LaravelYoucanPay::findBillable($order_id);
+
+```
+
+### Generate Token
+
+If you need to generate the token form the user model the cutomer info will be attached directly from `getCustomerInfo` method
+
+```php
+
+$data= [
+  'order_id' => '123',
+  'amount' => 2000 // amount=20*100
+];
+
+$token = $user->getPaymentToken($data, $request);
+```
+
+If you need to add the metadata you can use
+
+```php
+
+$data= [
+  'order_id' => '123',
+  'amount' => 2000 // amount=20*100
+];
+
+$metadata = [
+  'key' => 'value'
+];
+
+$token = $user->getPaymentToken($data, $request, $metadata);
+```
+
+If you need to get the payment url as well from the user model you can use `getPaymentURL` method with the same parameters below.
+
+```php
+$payment_url = $user->getPaymentURL($data, $request, $metadata);
+```
+
+### Generate Payment URL
 
 ## Usage
 
