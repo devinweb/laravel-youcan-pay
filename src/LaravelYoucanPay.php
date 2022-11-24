@@ -127,9 +127,9 @@ class LaravelYoucanPay
      * @param  string  $customerModel
      * @return void
      */
-    public function useCustomerModel($customerModel)
+    public static function useCustomerModel($customerModel)
     {
-        $this->customerModel = $customerModel;
+        static::$customerModel = $customerModel;
     }
 
     /**

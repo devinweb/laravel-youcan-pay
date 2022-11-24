@@ -3,6 +3,7 @@
 namespace Devinweb\LaravelYoucanPay\Traits;
 
 use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
+use Devinweb\LaravelYoucanPay\Models\Transaction;
 use InvalidArgumentException;
 use Illuminate\Http\Request;
 
@@ -15,9 +16,7 @@ trait Billable
      */
     public function transactions()
     {
-        $transaction_model = LaravelYoucanPay::$customerModel;
-
-        return $this->hasMany($transaction_model, $this->getForeignKey());
+        return $this->hasMany(Transaction::class, $this->getForeignKey());
     }
 
     /**
@@ -84,6 +83,6 @@ trait Billable
      */
     private function getInstance(array $data, Request $request, array $metadata=[])
     {
-        return LaravelYoucanPay::setCustomerInfo($this->getCustomerInfo())->seMetadata($metadata)->createTokenization($data, $request);
+        return LaravelYoucanPay::setCustomerInfo($this->getCustomerInfo())->setMetadata($metadata)->createTokenization($data, $request);
     }
 }

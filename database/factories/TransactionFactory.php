@@ -3,7 +3,7 @@
 namespace Devinweb\LaravelYoucanPay\Database\Factories;
 
 use Devinweb\LaravelYoucanPay\Enums\YouCanPayStatus;
-use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
+use Devinweb\LaravelYoucanPay\LaravelYoucanPay;
 use Devinweb\LaravelYoucanPay\Models\Transaction;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;

@@ -289,7 +289,7 @@ $metadata = [
   'key' => 'value'
 ];
 
-$token= LaravelYoucanPay::seMetadata($metadata)
+$token= LaravelYoucanPay::setMetadata($metadata)
                           ->setCustomerInfo($customerInfo)
                           ->createTokenization($data, $request)->getId();
 ```

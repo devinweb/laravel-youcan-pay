@@ -2,8 +2,9 @@
 
 namespace Devinweb\LaravelYoucanPay\Tests;
 
-// use Devinweb\LaravelHyperpay\Tests\Fixtures\User;
+use Devinweb\LaravelYoucanPay\LaravelYoucanPay;
 use Devinweb\LaravelYoucanPay\Providers\LaravelYoucanPayServiceProvider;
+use Devinweb\LaravelYoucanPay\Tests\Fixtures\User;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase
@@ -16,8 +17,8 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function defineDatabaseMigrations()
     {
-        // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        // $this->loadLaravelMigrations();
+        $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
+        $this->loadLaravelMigrations();
     }
 
     protected function getPackageProviders($app)
@@ -28,18 +29,20 @@ abstract class TestCase extends OrchestraTestCase
     protected function getEnvironmentSetUp($app)
     {
         // // import the CreatePostsTable class from the migration
-        // include_once __DIR__ . '/../database/migrations/create_transactions_table.php.stub';
+        // include_once __DIR__ . '/../database/migrations/2020_11_22_000001_create_transactions_table.php';
 
-        // // run the up() method of that migration class
+        // // // run the up() method of that migration class
         // (new \CreateTransactionsTable)->up();
+
+        LaravelYoucanPay::useCustomerModel(User::class);
     }
 
-    // protected function createCustomer($description = 'imad', array $options = []): User
-    // {
-    //     return User::create(array_merge([
-    //         'email' => "{$description}@hyperpay-laravel.com",
-    //         'name' => 'Darbaoui imad',
-    //         'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-    //     ], $options));
-    // }
+    protected function createCustomer($email = 'imad', array $options = []): User
+    {
+        return User::create(array_merge([
+            'email' => "{$email}@devinweb.com",
+            'name' => 'Darbaoui imad',
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+        ], $options));
+    }
 }
