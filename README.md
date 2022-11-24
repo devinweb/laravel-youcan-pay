@@ -27,8 +27,10 @@
     - [Metadata](#Metadata)
   - [Generate Payment form](#generate-payment-form)
   - [Handling YouCanPay Webhooks](#Handling-YouCanPay-Webhooks)
-    - [Verify webhook signature](#Verify-webhook-signature)
-    - [Validate webhook signature](#validate-webhook-signature)
+    - [Webhooks URl]()
+    - [Webhooks Events]()
+    - [Verify webhook signature manually](#Verify-webhook-signature)
+    - [Validate webhook signature manually](#validate-webhook-signature)
 - [Testing and test cards](#Testing-and-test-cards)
 
 ## Introduction
@@ -348,12 +350,94 @@ For more information please check this [link](https://github.com/NextmediaMa/you
 
 YouCan Pay uses webhooks to notify your application when an event happens in your account. Webhooks are useful for handling reactions to asynchronous events on your backend, such as successful payments, failed payments, successful refunds, and many other real time events. A webhook enables YouCan Pay to push real-time notifications to your application by delivering JSON payloads over HTTPS.
 
-Before making any action related to the events received by YouCanPay, you can need to verify the signature to make sure the payload was received from YouCan pay services.
-there's two method `verifyWebhookSignature` and `validateWebhookSignature`
+#### Webhooks URL
 
-#### Verify webhook signature
+To ensure your application can handle YouCanPay webhooks, be sure to configure the webhook URL in the YouCanPay control panel. By default the package comes with a webhook build-in
+using the URL `youcanpay/webhook` you can find it by listing all the routes in your app using `php artisan route:list`
+this webhook valide the signature related to the payload received, and dispatch an event.
 
-The webhook data looks like
+#### Webhooks Middleware
+
+If you need to attempt the webhook signature validation before process any action, you can use the middelware `verify-youcanpay-webhook-signature`, that valid the signature related to the payload received from YouCanPay
+
+```php
+
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+
+class WebHookController extends Controller
+{
+    /**
+     * Create a new WebhookController instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('verify-youcanpay-webhook-signature');
+    }
+    //...
+}
+```
+
+#### Webhooks Events
+
+LaravelYouCanPay handles the common YouCanPay webhook events, if you need to handle the webhook events that you need you can listining to the event that dispatched bu the package.
+
+- Devinweb\LaravelYoucanPay\Events\WebhookReceived
+
+You need to register a listener that can handle the event:
+
+```php
+<?php
+
+namespace App\Listeners;
+
+use Devinweb\LaravelYoucanPay\Events\WebhookReceived;
+
+class YouCanPayEventListener
+{
+    /**
+     * Handle received Stripe webhooks.
+     *
+     * @param  \Devinweb\LaravelYoucanPay\Events\WebhookReceived  $event
+     * @return void
+     */
+    public function handle(WebhookReceived $event)
+    {
+        if ($event->payload['event_name'] === 'transaction.paid') {
+            // Handle the incoming event...
+        }
+    }
+}
+
+```
+
+Once your listener has been defined, you may register it within your application's `EventServiceProvider`
+
+```php
+<?php
+
+namespace App\Providers;
+
+use App\Listeners\YouCanPayEventListener;
+use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Devinweb\LaravelYoucanPay\Events\WebhookReceived;
+
+class EventServiceProvider extends ServiceProvider
+{
+    protected $listen = [
+        WebhookReceived::class => [
+            YouCanPayEventListener::class,
+        ],
+    ];
+}
+
+```
+
+#### Verify webhook signature Manually
+
+The webhook data received from YouCanPay looks like
 
 ```
 [
@@ -422,7 +506,7 @@ class YouCanPayWebhooksController extends Controller
     public function handle(Request $request)
     {
         $signature = $request->header('x-youcanpay-signature');
-        $payload = $request->get('payload');
+        $payload = json_decode($request->getContent(), true);
         if (LaravelYoucanPay::verifyWebhookSignature($signature, $payload)) {
             // you code here
         }
@@ -430,7 +514,7 @@ class YouCanPayWebhooksController extends Controller
 }
 ```
 
-#### Validate webhook signature
+#### Validate webhook signature Manually
 
 The validation has the same impact as the verification, but the validation throws an exception that you can inspect it in the log file.
 
