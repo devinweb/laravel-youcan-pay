@@ -6,7 +6,7 @@ use Devinweb\LaravelYoucanPay\Enums\YouCanPayStatus;
 use Devinweb\LaravelYoucanPay\LaravelYoucanPay;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Cashier\Database\Factories\TransactionFactory;
+use Devinweb\LaravelYoucanPay\Database\Factories\TransactionFactory;
 
 /**
  * @psalm-suppress PropertyNotSetInConstructor
@@ -122,6 +122,8 @@ class Transaction extends Model
      */
     protected static function newFactory()
     {
+        // return TransactionFactory::new();
+
         return TransactionFactory::new();
     }
 }
