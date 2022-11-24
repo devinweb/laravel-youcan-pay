@@ -380,7 +380,7 @@ class WebHookController extends Controller
 }
 ```
 
-#### Webhooks Events
+#### Webhook Events
 
 LaravelYouCanPay handles the common YouCanPay webhook events, if you need to handle the webhook events that you need you can listining to the event that dispatched bu the package.
 
