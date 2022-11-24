@@ -47,7 +47,7 @@ composer require devinweb/laravel-youcan-pay
 
 ## Database Migrations
 
-LaravelYouCanPay package provides it's own database to manage the user transactions in different steps, the migrations will create a new `transactions` table to hold all your user's transactions.
+LaravelYouCanPay package provides its own database to manage the user transactions in different steps, the migrations will create a new `transactions` table to hold all your user's transactions.
 
 ```shell
 php artisan migrate
@@ -71,8 +71,8 @@ then you can find the config file in `config/youcanpay.php`
 
 ### Billable Model
 
-If you want the package manage the transactions based on the user model, add the `Billable` trait to your user model.
-This trait provides various methods to allow to perform transaction tasks, such as creating a transaction, get `paid`, `failed` and `pending` transactions
+If you want the package to manage the transactions based on the user model, add the `Billable` trait to your user model.
+This trait provides various methods to perform transaction tasks, such as creating a transaction, getting `paid`, `failed` and `pending` transactions.
 
 ```php
 use Devinweb\LaravelYoucanPay\Traits\Billable;
@@ -83,7 +83,7 @@ class User extends Authenticatable
 }
 ```
 
-LaravelYoucanPay assumes your user model will be `App\Models\User`, if you use different user model namespace you should specify it using the method `useCustomerModel` method.
+LaravelYoucanPay assumes your user model will be `App\Models\User`, if you use a different user model namespace you should specify it using the method `useCustomerModel` method.
 This method should typically be called in the boot method of your `AppServiceProvider` class
 
 ```php
@@ -101,7 +101,7 @@ public function boot()
 }
 ```
 
-If you need in each transaction the package uses the billing data for each user, make sure to include a `getCustomerInfo()` method in your user model, which return an array that contains all the data we need.
+If you need in each transaction the package uses the billing data for each user, make sure to include a `getCustomerInfo()` method in your user model, which returns an array that contains all the data we need.
 
 ```php
 
@@ -217,7 +217,7 @@ public function tokenization(Request $request)
         'amount' => 200
     ];
 
-    $token= LaravelYoucanPay::createTokenization($data, $request)->getId();
+    $token= LaravelYoucanPay::createTokenization($order_data, $request)->getId();
     $public_key = config('youcanpay.public_key');
     $isSandbox = config('youcanpay.sandboxMode');
     $language = config('app.locale');
@@ -247,7 +247,7 @@ Then you can put that url in your html page
 
 #### Customer info
 
-If you need to add the customer data during the tokenization you can use
+If you need to add the customer data during the tokenization, Please keep these array keys(`name`, `address`, `zip_code`, `city`, `state`, `country_code`, `phone` and `email`). you can use
 
 ```php
 use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
@@ -350,15 +350,26 @@ For more information please check this [link](https://github.com/NextmediaMa/you
 
 YouCan Pay uses webhooks to notify your application when an event happens in your account. Webhooks are useful for handling reactions to asynchronous events on your backend, such as successful payments, failed payments, successful refunds, and many other real time events. A webhook enables YouCan Pay to push real-time notifications to your application by delivering JSON payloads over HTTPS.
 
+> #### Webhooks and CSRF Protection
+>
+> YouCanPay webhooks need to reach your URI without any obstacle, so you need to disable CSRF protection for the webhook URI, to do that
+> make sure to add your path to the exception array in your application's `App\Http\Middleware\VerifyCsrfToken` middleware.
+>
+> ```php
+> protected $except = [
+>    'youcanpay/*',
+> ]
+> ```
+
 #### Webhooks URL
 
 To ensure your application can handle YouCanPay webhooks, be sure to configure the webhook URL in the YouCanPay control panel. By default the package comes with a webhook build-in
-using the URL `youcanpay/webhook` you can find it by listing all the routes in your app using `php artisan route:list`
-this webhook valide the signature related to the payload received, and dispatch an event.
+using the URL `youcanpay/webhook` you can find it by listing all the routes in your app using `php artisan route:list`,
+This webhook validates the signature related to the payload received, and dispatches an event.
 
 #### Webhooks Middleware
 
-If you need to attempt the webhook signature validation before process any action, you can use the middelware `verify-youcanpay-webhook-signature`, that valid the signature related to the payload received from YouCanPay
+If you need to attempt the webhook signature validation before processing any action, you can use the middleware `verify-youcanpay-webhook-signature`, that validates the signature related to the payload received from YouCanPay.
 
 ```php
 
@@ -382,7 +393,7 @@ class WebHookController extends Controller
 
 #### Webhook Events
 
-LaravelYouCanPay handles the common YouCanPay webhook events, if you need to handle the webhook events that you need you can listining to the event that dispatched bu the package.
+LaravelYouCanPay handles the common YouCanPay webhook events, if you need to handle the webhook events that you need you can listen to the event that is dispatched by the package.
 
 - Devinweb\LaravelYoucanPay\Events\WebhookReceived
 
