@@ -21,8 +21,6 @@ class VerifyWebhookSignature
     {
         $payload = json_decode($request->getContent(), true);
         $signature = $request->header('x-youcanpay-signature');
-        Log::info($payload);
-        Log::info($signature);
         LaravelYoucanPay::validateWebhookSignature($signature, $payload);
 
         return $next($request);

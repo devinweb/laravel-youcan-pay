@@ -3,6 +3,7 @@
 namespace Devinweb\LaravelYoucanPay;
 
 use Devinweb\LaravelYoucanPay\Actions\CreateToken;
+use Devinweb\LaravelYoucanPay\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
@@ -140,7 +141,7 @@ class LaravelYoucanPay
      */
     public function findBillable($orderId)
     {
-        return $orderId ? (new $this->customerModel)->where('order_id', $orderId)->first() : null;
+        return $orderId ? Transaction::where('order_id', $orderId)->first()->user : null;
     }
 
     /**

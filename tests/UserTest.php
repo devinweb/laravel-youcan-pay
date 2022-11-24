@@ -3,8 +3,8 @@
 namespace Devinweb\LaravelYoucanPay\Tests;
 
 use Devinweb\LaravelYoucanPay\Actions\CreateToken;
+use Devinweb\LaravelYoucanPay\Enums\YouCanPayStatus;
 use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
-use Devinweb\LaravelYoucanPay\LaravelYoucanPay as LYC;
 use Devinweb\LaravelYoucanPay\Models\Transaction;
 use Devinweb\LaravelYoucanPay\Tests\Fixtures\User as FixturesUser;
 use Devinweb\LaravelYoucanPay\Traits\Billable;
@@ -175,6 +175,78 @@ class UserTest extends TestCase
             ->create();
 
         $this->assertDatabaseCount('transactions', 3);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function test_transaction_owner()
+    {
+        $user = \Devinweb\LaravelYoucanPay\Tests\Fixtures\User::factory()
+            ->has(Transaction::factory()->count(1))
+            ->create();
+
+        $this->assertDatabaseCount('transactions', 1);
+        $owner = Transaction::first()->owner;
+        $user_owner = Transaction::first()->user;
+
+        $this->assertEquals($user->email, $owner->email);
+        $this->assertEquals($user->email, $user_owner->email);
+    }
+    
+    /**
+     * @test
+     * @return void
+     */
+    public function test_user_transaction_status()
+    {
+        $user = \Devinweb\LaravelYoucanPay\Tests\Fixtures\User::factory()
+            ->has(Transaction::factory()->count(1))
+            ->create();
+
+        $this->assertDatabaseCount('transactions', 1);
+        
+        $transaction = $user->transactions()->first();
+        
+        $this->assertTrue($transaction->isPaid());
+
+        $paid_count = $user->transactions()->paid()->count();
+        
+        $pending_count = $user->transactions()->pending()->count();
+        
+        $failed_count = $user->transactions()->failed()->count();
+        
+        $this->assertEquals($paid_count, 1);
+        
+        $this->assertEquals($pending_count, 0);
+        
+        $this->assertEquals($failed_count, 0);
+        
+        $transaction = tap($transaction)->update(['status' => YouCanPayStatus::pending()]);
+        
+        $this->assertTrue($transaction->isPending());
+        
+        $transaction = tap($transaction)->update(['status' => YouCanPayStatus::failed()]);
+
+        $this->assertTrue($transaction->isFailed());
+    }
+
+    /**
+     * @test
+     *
+     * @return void
+     */
+    public function test_find_billable_from_order_id()
+    {
+        $user = \Devinweb\LaravelYoucanPay\Tests\Fixtures\User::factory()
+            ->has(Transaction::factory()->count(1))
+            ->create();
+        
+        $transaction = Transaction::first();
+        $billable = LaravelYoucanPay::findBillable($transaction->order_id);
+
+        $this->assertEquals($user->email, $billable->email);
     }
 }
 

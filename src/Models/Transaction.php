@@ -91,9 +91,19 @@ class Transaction extends Model
     {
         return $this->status == YouCanPayStatus::paid();
     }
+    
+    /**
+     * Determine if the transaction is paid.
+     *
+     * @return bool
+     */
+    public function isFailed()
+    {
+        return $this->status == YouCanPayStatus::failed();
+    }
 
     /**
-     * Filter query by incomplete.
+     * Filter query by paid.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return void
@@ -104,7 +114,7 @@ class Transaction extends Model
     }
     
     /**
-     * Filter query by incomplete.
+     * Filter query by failed.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return void
@@ -112,6 +122,17 @@ class Transaction extends Model
     public function scopeFailed($query)
     {
         $query->where('status', YouCanPayStatus::FAILED());
+    }
+    
+    /**
+     * Filter query by pending.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return void
+     */
+    public function scopePending($query)
+    {
+        $query->where('status', YouCanPayStatus::PENDING());
     }
 
 

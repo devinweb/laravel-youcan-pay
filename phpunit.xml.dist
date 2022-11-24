@@ -29,5 +29,6 @@
         <env name="SANDBOX_MODE" value="true"/>
         <env name="PRIVATE_KEY" value="private_key"/>
         <env name="PUBLIC_KEY" value="public_key"/>
+        <env name="CURRENCY" value="MAD"/>
     </php>
 </phpunit>
