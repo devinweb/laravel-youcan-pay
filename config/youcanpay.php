@@ -15,6 +15,6 @@ return [
     
     "success_redirect_uri" => env("SUCCCESS_REDIRECT_URI"),
     
-    "fail_redirect_uri" => env("FAIL_REDIRECT_URI"),
+    "fail_redirect_uri" => env("FAIL_REDIRECT_URI")
 
 ];

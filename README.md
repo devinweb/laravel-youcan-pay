@@ -11,7 +11,14 @@
 
 - [Introduction](#Introduction)
 - [Installation](#Installation)
+- [Database Migrations](#Database-Migrations)
 - [Configuration](#configuration)
+  - [Billable Model](#Billable-Model)
+  - [YouCanPay Keys](#YouCanPay-Keys)
+- [Customers](#Customers)
+  - [Retrieving Customers](#Retrieving-Customers)
+  - [Generate Token](#Generate-Token)
+  - [Generate Payment URL](#Generate-Payment-URL)
 - [Usage](#Usage)
   - [Tokenization](#Create-a-payment)
     - [Get Token id](#Get-token-id)
@@ -20,8 +27,10 @@
     - [Metadata](#Metadata)
   - [Generate Payment form](#generate-payment-form)
   - [Handling YouCanPay Webhooks](#Handling-YouCanPay-Webhooks)
-    - [Verify webhook signature](#Verify-webhook-signature)
-    - [Validate webhook signature](#validate-webhook-signature)
+    - [Webhooks URl]()
+    - [Webhooks Events]()
+    - [Verify webhook signature manually](#Verify-webhook-signature)
+    - [Validate webhook signature manually](#validate-webhook-signature)
 - [Testing and test cards](#Testing-and-test-cards)
 
 ## Introduction
@@ -36,6 +45,20 @@ You can install the package via composer:
 composer require devinweb/laravel-youcan-pay
 ```
 
+## Database Migrations
+
+LaravelYouCanPay package provides its own database to manage the user transactions in different steps, the migrations will create a new `transactions` table to hold all your user's transactions.
+
+```shell
+php artisan migrate
+```
+
+If you need to overwrite the migrations that ship with LaravelYouCanPay, you can publish them using the vendor:publish Artisan command:
+
+```shell
+php artisan vendor:publish --tag="youcanpay-migrations"
+```
+
 ## Configuration
 
 To publish the config file you can use the command
@@ -46,7 +69,63 @@ php artisan vendor:publish --tag="youcanpay-config"
 
 then you can find the config file in `config/youcanpay.php`
 
-## YouCanPay Keys
+### Billable Model
+
+If you want the package to manage the transactions based on the user model, add the `Billable` trait to your user model.
+This trait provides various methods to perform transaction tasks, such as creating a transaction, getting `paid`, `failed` and `pending` transactions.
+
+```php
+use Devinweb\LaravelYoucanPay\Traits\Billable;
+
+class User extends Authenticatable
+{
+    use Billable;
+}
+```
+
+LaravelYoucanPay assumes your user model will be `App\Models\User`, if you use a different user model namespace you should specify it using the method `useCustomerModel` method.
+This method should typically be called in the boot method of your `AppServiceProvider` class
+
+```php
+use App\Models\Core\User;
+use Devinweb\LaravelYoucanPay\LaravelYoucanPay;;
+
+/**
+ * Bootstrap any application services.
+ *
+ * @return void
+ */
+public function boot()
+{
+    LaravelYoucanPay::useCustomerModel(User::class);
+}
+```
+
+If you need in each transaction the package uses the billing data for each user, make sure to include a `getCustomerInfo()` method in your user model, which returns an array that contains all the data we need.
+
+```php
+
+/**
+ * Get the customer info to send them when we generate the form token.
+ *
+ * @return array
+ */
+public function getCustomerInfo()
+{
+    return [
+      'name'         => $this->name,
+      'address'      => '',
+      'zip_code'     => '',
+      'city'         => '',
+      'state'        => '',
+      'country_code' => 'MA',
+      'phone'        => $this->phone,
+      'email'        => $this->email,
+    ];
+}
+```
+
+### YouCanPay Keys
 
 Next, you should configure your environment in your application's `.env`
 
@@ -59,6 +138,58 @@ CURRENCY=MAD
 SUCCCESS_REDIRECT_URI=
 FAIL_REDIRECT_URI=
 ```
+
+## Customers
+
+### Retrieving Customers
+
+You can retrieve a customer by their YouCanPay ID using the `findBillable` method. This method will return an instance of the billable model:
+
+```php
+
+use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
+
+$user = LaravelYoucanPay::findBillable($order_id);
+
+```
+
+### Generate Token
+
+If you need to generate the token form the user model the cutomer info will be attached directly from `getCustomerInfo` method
+
+```php
+
+$data= [
+  'order_id' => '123',
+  'amount' => 2000 // amount=20*100
+];
+
+$token = $user->getPaymentToken($data, $request);
+```
+
+If you need to add the metadata you can use
+
+```php
+
+$data= [
+  'order_id' => '123',
+  'amount' => 2000 // amount=20*100
+];
+
+$metadata = [
+  'key' => 'value'
+];
+
+$token = $user->getPaymentToken($data, $request, $metadata);
+```
+
+If you need to get the payment url as well from the user model you can use `getPaymentURL` method with the same parameters below.
+
+```php
+$payment_url = $user->getPaymentURL($data, $request, $metadata);
+```
+
+### Generate Payment URL
 
 ## Usage
 
@@ -86,7 +217,7 @@ public function tokenization(Request $request)
         'amount' => 200
     ];
 
-    $token= LaravelYoucanPay::createTokenization($data, $request)->getId();
+    $token= LaravelYoucanPay::createTokenization($order_data, $request)->getId();
     $public_key = config('youcanpay.public_key');
     $isSandbox = config('youcanpay.sandboxMode');
     $language = config('app.locale');
@@ -116,7 +247,7 @@ Then you can put that url in your html page
 
 #### Customer info
 
-If you need to add the customer data during the tokenization you can use
+If you need to add the customer data during the tokenization, Please keep these array keys(`name`, `address`, `zip_code`, `city`, `state`, `country_code`, `phone` and `email`). you can use
 
 ```php
 use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
@@ -158,7 +289,7 @@ $metadata = [
   'key' => 'value'
 ];
 
-$token= LaravelYoucanPay::seMetadata($metadata)
+$token= LaravelYoucanPay::setMetadata($metadata)
                           ->setCustomerInfo($customerInfo)
                           ->createTokenization($data, $request)->getId();
 ```
@@ -219,12 +350,105 @@ For more information please check this [link](https://github.com/NextmediaMa/you
 
 YouCan Pay uses webhooks to notify your application when an event happens in your account. Webhooks are useful for handling reactions to asynchronous events on your backend, such as successful payments, failed payments, successful refunds, and many other real time events. A webhook enables YouCan Pay to push real-time notifications to your application by delivering JSON payloads over HTTPS.
 
-Before making any action related to the events received by YouCanPay, you can need to verify the signature to make sure the payload was received from YouCan pay services.
-there's two method `verifyWebhookSignature` and `validateWebhookSignature`
+> #### Webhooks and CSRF Protection
+>
+> YouCanPay webhooks need to reach your URI without any obstacle, so you need to disable CSRF protection for the webhook URI, to do that
+> make sure to add your path to the exception array in your application's `App\Http\Middleware\VerifyCsrfToken` middleware.
+>
+> ```php
+> protected $except = [
+>    'youcanpay/*',
+> ]
+> ```
 
-#### Verify webhook signature
+#### Webhooks URL
 
-The webhook data looks like
+To ensure your application can handle YouCanPay webhooks, be sure to configure the webhook URL in the YouCanPay control panel. By default the package comes with a webhook build-in
+using the URL `youcanpay/webhook` you can find it by listing all the routes in your app using `php artisan route:list`,
+This webhook validates the signature related to the payload received, and dispatches an event.
+
+#### Webhooks Middleware
+
+If you need to attempt the webhook signature validation before processing any action, you can use the middleware `verify-youcanpay-webhook-signature`, that validates the signature related to the payload received from YouCanPay.
+
+```php
+
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+
+class WebHookController extends Controller
+{
+    /**
+     * Create a new WebhookController instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('verify-youcanpay-webhook-signature');
+    }
+    //...
+}
+```
+
+#### Webhook Events
+
+LaravelYouCanPay handles the common YouCanPay webhook events, if you need to handle the webhook events that you need you can listen to the event that is dispatched by the package.
+
+- Devinweb\LaravelYoucanPay\Events\WebhookReceived
+
+You need to register a listener that can handle the event:
+
+```php
+<?php
+
+namespace App\Listeners;
+
+use Devinweb\LaravelYoucanPay\Events\WebhookReceived;
+
+class YouCanPayEventListener
+{
+    /**
+     * Handle received Stripe webhooks.
+     *
+     * @param  \Devinweb\LaravelYoucanPay\Events\WebhookReceived  $event
+     * @return void
+     */
+    public function handle(WebhookReceived $event)
+    {
+        if ($event->payload['event_name'] === 'transaction.paid') {
+            // Handle the incoming event...
+        }
+    }
+}
+
+```
+
+Once your listener has been defined, you may register it within your application's `EventServiceProvider`
+
+```php
+<?php
+
+namespace App\Providers;
+
+use App\Listeners\YouCanPayEventListener;
+use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Devinweb\LaravelYoucanPay\Events\WebhookReceived;
+
+class EventServiceProvider extends ServiceProvider
+{
+    protected $listen = [
+        WebhookReceived::class => [
+            YouCanPayEventListener::class,
+        ],
+    ];
+}
+
+```
+
+#### Verify webhook signature Manually
+
+The webhook data received from YouCanPay looks like
 
 ```
 [
@@ -293,7 +517,7 @@ class YouCanPayWebhooksController extends Controller
     public function handle(Request $request)
     {
         $signature = $request->header('x-youcanpay-signature');
-        $payload = $request->get('payload');
+        $payload = json_decode($request->getContent(), true);
         if (LaravelYoucanPay::verifyWebhookSignature($signature, $payload)) {
             // you code here
         }
@@ -301,7 +525,7 @@ class YouCanPayWebhooksController extends Controller
 }
 ```
 
-#### Validate webhook signature
+#### Validate webhook signature Manually
 
 The validation has the same impact as the verification, but the validation throws an exception that you can inspect it in the log file.
 
