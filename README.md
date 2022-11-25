@@ -88,7 +88,7 @@ This method should typically be called in the boot method of your `AppServicePro
 
 ```php
 use App\Models\Core\User;
-use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
+use Devinweb\LaravelYoucanPay\LaravelYoucanPay;;
 
 /**
  * Bootstrap any application services.

@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('user_id');
             $table->string('name');
             $table->string('order_id')->unique();
+            $table->string('youcanpay_id')->unique();
             $table->string('status');
             $table->string('price')->nullable();
             $table->string('refund')->nullable();

@@ -244,6 +244,7 @@ class UserTest extends TestCase
             ->create();
         
         $transaction = Transaction::first();
+
         $billable = LaravelYoucanPay::findBillable($transaction->order_id);
 
         $this->assertEquals($user->email, $billable->email);
