@@ -19,7 +19,8 @@
         "php": "^7.4|^8.0",
         "illuminate/support": "^7.0|^8.0",
         "laravel/framework": "8.*",
-        "youcanpay/payment-sdk": "*"
+        "youcanpay/payment-sdk": "*",
+        "spatie/laravel-enum": "^2.0|^3.0"
     },
     "require-dev": {
         "orchestra/testbench": "^6.0",
@@ -28,7 +29,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Devinweb\\LaravelYoucanPay\\": "src"
+            "Devinweb\\LaravelYoucanPay\\": "src",
+            "Devinweb\\LaravelYoucanPay\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {

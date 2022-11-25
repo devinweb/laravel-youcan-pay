@@ -3,6 +3,7 @@
 namespace Devinweb\LaravelYoucanPay;
 
 use Devinweb\LaravelYoucanPay\Actions\CreateToken;
+use Devinweb\LaravelYoucanPay\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
@@ -66,6 +67,13 @@ class LaravelYoucanPay
     private $customer_info;
 
     /**
+     * The default customer model class name.
+     *
+     * @var string
+     */
+    public static $customerModel = 'App\\Models\\User';
+
+    /**
      * Create a new LaravelYouCanPay instance.
      *
      * @return void
@@ -88,7 +96,7 @@ class LaravelYoucanPay
      *
      * @param array $paramters
      * @param \Illuminate\Http\Request $request
-     * @return void
+     * @return $this
      */
     public function createTokenization(array $attributes, Request $request)
     {
@@ -114,6 +122,27 @@ class LaravelYoucanPay
         return $this;
     }
 
+    /**
+     * Set the customer model class name.
+     *
+     * @param  string  $customerModel
+     * @return void
+     */
+    public static function useCustomerModel($customerModel)
+    {
+        static::$customerModel = $customerModel;
+    }
+
+    /**
+     * Get the customer instance by its YouCanPay ID.
+     *
+     * @param  string|null  $orderId
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function findBillable($orderId)
+    {
+        return $orderId ? Transaction::where('order_id', $orderId)->first()->user : null;
+    }
 
     /**
      * Set the customer data

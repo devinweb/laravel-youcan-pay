@@ -2,48 +2,58 @@
 
 namespace Devinweb\LaravelYoucanPay\Providers;
 
+use Devinweb\LaravelYoucanPay\Http\Middleware\VerifyWebhookSignature;
 use Devinweb\LaravelYoucanPay\LaravelYoucanPay;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Routing\Router;
 
 class LaravelYoucanPayServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
+     * @return void
      */
     public function boot()
     {
-        /*
-         * Optional methods to load your package assets
-         */
-        // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'laravel-youcan-pay');
-        // $this->loadViewsFrom(__DIR__.'/../resources/views', 'laravel-youcan-pay');
-        // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        // $this->loadRoutesFrom(__DIR__.'/routes.php');
+        $this->registerMiddleware();
+        $this->registerRoutes();
+        $this->registerMigrations();
+        $this->registerPublishing();
+    }
 
+    /**
+     * Register the package migrations.
+     *
+     * @return void
+     */
+    protected function registerMigrations()
+    {
         if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__.'/../../config/youcanpay.php' => config_path('youcanpay.php'),
-            ], 'youcanpay-config');
-
-            // Publishing the views.
-            /*$this->publishes([
-                __DIR__.'/../resources/views' => resource_path('views/vendor/laravel-youcan-pay'),
-            ], 'views');*/
-
-            // Publishing assets.
-            /*$this->publishes([
-                __DIR__.'/../resources/assets' => public_path('vendor/laravel-youcan-pay'),
-            ], 'assets');*/
-
-            // Publishing the translation files.
-            /*$this->publishes([
-                __DIR__.'/../resources/lang' => resource_path('lang/vendor/laravel-youcan-pay'),
-            ], 'lang');*/
-
-            // Registering package commands.
-            // $this->commands([]);
+            $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
         }
     }
+
+
+        /**
+     * Register the package's publishable resources.
+     *
+     * @return void
+     */
+    protected function registerPublishing()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                 __DIR__.'/../../config/youcanpay.php' => config_path('youcanpay.php'),
+             ], 'youcanpay-config');
+
+
+            $this->publishes([
+                __DIR__.'/../../database/migrations' => $this->app->databasePath('migrations'),
+            ], 'youcanpay-migrations');
+        }
+    }
+
 
     /**
      * Register the application services.
@@ -57,5 +67,33 @@ class LaravelYoucanPayServiceProvider extends ServiceProvider
         $this->app->singleton('laravel-youcan-pay', function () {
             return new LaravelYoucanPay;
         });
+    }
+
+
+    /**
+     * Register the package routes.
+     *
+     * @return void
+     */
+    protected function registerRoutes()
+    {
+        Route::group([
+            'prefix' => 'youcanpay',
+            'namespace' => 'Devinweb\LaravelYoucanPay\Http\Controllers',
+            'as' => 'youcanpay.',
+        ], function () {
+            $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');
+        });
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    protected function registerMiddleware()
+    {
+        $router = $this->app->make(Router::class);
+        $router->aliasMiddleware('verify-youcanpay-webhook-signature', VerifyWebhookSignature::class);
     }
 }
