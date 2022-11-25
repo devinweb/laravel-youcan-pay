@@ -30,6 +30,7 @@ class TransactionFactory extends Factory
             (new $model)->getForeignKey() => ($model)::factory(),
             'name' => 'default',
             'order_id' => Str::random(40),
+            'youcanpay_id' => Str::random(40),
             'status' => YouCanPayStatus::PAID(),
             'price' => null,
             'payload'=> []

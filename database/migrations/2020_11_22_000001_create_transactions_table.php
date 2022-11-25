@@ -14,7 +14,7 @@ return new class extends Migration {
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('name');
             $table->string('order_id')->unique();
             $table->string('youcanpay_id')->unique();
@@ -23,8 +23,6 @@ return new class extends Migration {
             $table->string('refund')->nullable();
             $table->json('payload')->nullable();
             $table->timestamps();
-
-            $table->index(['user_id', 'status']);
         });
     }
 

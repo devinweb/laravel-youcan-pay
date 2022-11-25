@@ -34,11 +34,11 @@ class WebHookController extends Controller
     public function handleWebhook(Request $request)
     {
         $payload = json_decode($request->getContent(), true);
-
+        
         $method = 'handle'.Str::studly(str_replace('.', '_', $payload['event_name']));
         
         WebhookReceived::dispatch($payload);
-
+        
         if (method_exists($this, $method)) {
             $this->{$method}($payload);
 
@@ -73,29 +73,29 @@ class WebHookController extends Controller
         ]);
     }
     
-    /**
-     * Handle transaction failed webhook event.
-     *
-     * @param array $payload
-     * @return void
-     */
-    protected function handleTransactionFailed(array $payload)
-    {
-        Log::info([
-           'failed' => $payload
-        ]);
-    }
+    // /**
+    //  * Handle transaction failed webhook event.
+    //  *
+    //  * @param array $payload
+    //  * @return void
+    //  */
+    // protected function handleTransactionFailed(array $payload)
+    // {
+    //     Log::info([
+    //        'failed' => $payload
+    //     ]);
+    // }
     
-    /**
-     * Handle transaction refunded webhook event.
-     *
-     * @param array $payload
-     * @return void
-     */
-    protected function handleTransactionRefunded(array $payload)
-    {
-        Log::info([
-           'refunded' => $payload
-        ]);
-    }
+    // /**
+    //  * Handle transaction refunded webhook event.
+    //  *
+    //  * @param array $payload
+    //  * @return void
+    //  */
+    // protected function handleTransactionRefunded(array $payload)
+    // {
+    //     Log::info([
+    //        'refunded' => $payload
+    //     ]);
+    // }
 }

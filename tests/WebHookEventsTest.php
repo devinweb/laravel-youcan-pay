@@ -25,19 +25,80 @@ class WebHookEventsTest extends TestCase
      * @test
      * @return void
      */
-    public function test_webhook_uri()
+    public function test_webhook_uri_with_an_existing_event_name()
     {
         Event::fake();
 
-        $payload = ['foo'=> 'bar'];
-        $signature = "ceee75263456946bf35b87708bea371708ce0e31f4daf9e8b301c1e53e3e3b06";
+        $payload = [
+            'id' => $youcanpay_id = 'a433f4de-b1f8-4e6a-a462-11ab2a92dba7',
+            'event_name'=> 'transaction.paid',
+            'payload' => [
+                'customer' => [
+                    'email' => 'imad@devinweb.com'
+                ],
+                'transaction' => [
+                    'order_id'=> $order_id='123',
+                    'amount' => '2000'
+                ]
+            ]
+        ];
+
+        $signature = hash_hmac(
+            'sha256',
+            json_encode($payload),
+            config('youcanpay.private_key'),
+            false
+        );
 
         $response = $this->withHeaders([
             'x-youcanpay-signature' => $signature,
         ])->postJson(route('youcanpay.webhook'), $payload);
-        
-        Event::assertDispatched(WebhookReceived::class);
 
+        Event::assertDispatched(WebhookReceived::class);
+        
+        $this->assertDatabaseHas('transactions', [
+            'order_id' => $order_id,
+            'youcanpay_id' => $youcanpay_id,
+        ]);
+
+        $response->assertOk();
+    }
+    
+    /**
+     * @test
+     * @return void
+     */
+    public function test_webhook_uri_with_event_name_not_found()
+    {
+        Event::fake();
+
+        $payload = [
+            'id' => $youcanpay_id = 'a433f4de-b1f8-4e6a-a462-11ab2a92dba7',
+            'event_name'=> 'fake_event_name',
+            'payload' => [
+                'customer' => [
+                    'email' => 'imad@devinweb.com'
+                ],
+                'transaction' => [
+                    'order_id'=> $order_id='123',
+                    'amount' => '2000'
+                ]
+            ]
+        ];
+
+        $signature = hash_hmac(
+            'sha256',
+            json_encode($payload),
+            config('youcanpay.private_key'),
+            false
+        );
+
+        $response = $this->withHeaders([
+            'x-youcanpay-signature' => $signature,
+        ])->postJson(route('youcanpay.webhook'), $payload);
+
+        Event::assertDispatched(WebhookReceived::class);
+        
         $response->assertOk();
     }
 }
