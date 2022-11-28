@@ -8,9 +8,12 @@ use InvalidArgumentException;
 use Illuminate\Http\Request;
 use Mockery;
 use Mockery\MockInterface;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class TokenizationTest extends TestCase
 {
+    use RefreshDatabase;
+
     private $request;
     
     public function setUp(): void

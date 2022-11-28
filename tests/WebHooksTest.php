@@ -3,7 +3,6 @@
 namespace Devinweb\LaravelYoucanPay\Tests;
 
 use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
-use Illuminate\Http\Request;
 use YouCan\Pay\API\Exceptions\InvalidWebhookSignatureException;
 
 class WebHooksTest extends TestCase

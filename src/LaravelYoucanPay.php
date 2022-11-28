@@ -3,6 +3,7 @@
 namespace Devinweb\LaravelYoucanPay;
 
 use Devinweb\LaravelYoucanPay\Actions\CreateToken;
+use Devinweb\LaravelYoucanPay\Enums\YouCanPayStatus;
 use Devinweb\LaravelYoucanPay\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -18,6 +19,20 @@ class LaravelYoucanPay
         'order_id' => 'required',
         'amount' => 'required',
     ];
+
+    /**
+     * Price
+     *
+     * @var int
+     */
+    private $price;
+
+    /**
+     * Order id
+     *
+     * @var string
+     */
+    private $order_id;
 
     /**
      * Youcan Pay instance
@@ -102,19 +117,23 @@ class LaravelYoucanPay
     {
         $this->validateTokenizationParameters($attributes);
         
+        $this->price = Arr::get($attributes, 'amount');
+
+        $this->order_id = Arr::get($attributes, 'order_id');
+        
         $this->ip = $request->ip();
         
-        $metadata = $this->metadata??[];
+        $this->metadata = $this->metadata??[];
 
-        $customer_info = $this->customer_info??[];
+        $this->customer_info = $this->customer_info??[];
 
         $this->token  =app(CreateToken::class)(
             $this->youcanpay_instance,
             [
                 'attributes' => $attributes,
                 'config' => $this->config,
-                'customer_info' => $customer_info,
-                'metadata' => $metadata,
+                'customer_info' => $this->customer_info,
+                'metadata' => $this->metadata,
                 'ip'=> $this->ip
             ]
         );
@@ -177,9 +196,11 @@ class LaravelYoucanPay
      */
     public function getId()
     {
+        $this->createPendingTransaction();
+
         return $this->token->getId();
     }
-
+    
     /**
      * Get the payment URL
      *
@@ -188,7 +209,9 @@ class LaravelYoucanPay
      */
     public function getPaymentURL(?string $lang=null)
     {
+        $this->createPendingTransaction();
         $lang = $lang ?? config('app.locale');
+
         return $this->token->getPaymentURL($lang);
     }
 
@@ -245,5 +268,30 @@ class LaravelYoucanPay
                 throw new InvalidArgumentException("The ${key} must be availabe in the array");
             }
         }
+    }
+
+    /**
+     * Create pending transaction
+     *
+     * @return void
+     */
+    private function createPendingTransaction()
+    {
+        $email = Arr::get($this->customer_info, 'email');
+        $user = (new static::$customerModel)->where('email', $email)->first();
+        
+        Transaction::create([
+            'user_id' => $user? $user->id : null,
+            'name' => 'default',
+            'order_id' => $this->order_id,
+            'status' => YouCanPayStatus::PENDING(),
+            'price' => $this->price,
+            'payload' => [
+                'payload' => [
+                    'metadata' => $this->metadata,
+                    'customer' => $this->customer_info
+                ]
+            ]
+        ]);
     }
 }

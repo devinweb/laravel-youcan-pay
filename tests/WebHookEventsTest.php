@@ -2,18 +2,7 @@
 
 namespace Devinweb\LaravelYoucanPay\Tests;
 
-use Devinweb\LaravelYoucanPay\Actions\CreateToken;
-use Devinweb\LaravelYoucanPay\Enums\YouCanPayStatus;
 use Devinweb\LaravelYoucanPay\Events\WebhookReceived;
-use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
-use Devinweb\LaravelYoucanPay\Models\Transaction;
-use Devinweb\LaravelYoucanPay\Tests\Fixtures\User as FixturesUser;
-use Devinweb\LaravelYoucanPay\Traits\Billable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
-use InvalidArgumentException;
-use Mockery;
-use Mockery\MockInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 

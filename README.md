@@ -15,11 +15,11 @@
 - [Configuration](#configuration)
   - [Billable Model](#Billable-Model)
   - [YouCanPay Keys](#YouCanPay-Keys)
-- [Customers](#Customers)
-  - [Retrieving Customers](#Retrieving-Customers)
-  - [Generate Token](#Generate-Token)
-  - [Generate Payment URL](#Generate-Payment-URL)
 - [Usage](#Usage)
+  - [Customers](#Customers)
+    - [Retrieving Customers](#Retrieving-Customers)
+    - [Generate Token](#Generate-Token)
+    - [Generate Payment URL](#Generate-Payment-URL)
   - [Tokenization](#Create-a-payment)
     - [Get Token id](#Get-token-id)
     - [Get Payment url](#Get-Payment-url)
@@ -342,6 +342,23 @@ Then to display the form your logic it's will be looks like the code below
 
 </script>
 
+```
+
+To start the payment you need an action, you can use a button
+
+```javascript
+document.getElementById("pay").addEventListener("click", function () {
+  // execute the payment
+  ycPay.pay(tokenId).then(successCallback).catch(errorCallback);
+});
+
+function successCallback(response) {
+  //your code here
+}
+
+function errorCallback(response) {
+  //your code here
+}
 ```
 
 For more information please check this [link](https://github.com/NextmediaMa/youcan-payment-php-sdk).

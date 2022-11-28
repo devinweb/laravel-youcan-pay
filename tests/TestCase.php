@@ -28,12 +28,6 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function getEnvironmentSetUp($app)
     {
-        // // import the CreatePostsTable class from the migration
-        // include_once __DIR__ . '/../database/migrations/2020_11_22_000001_create_transactions_table.php';
-
-        // // // run the up() method of that migration class
-        // (new \CreateTransactionsTable)->up();
-
         LaravelYoucanPay::useCustomerModel(User::class);
     }
 
