@@ -3,6 +3,7 @@
 namespace Devinweb\LaravelYoucanPay\Tests;
 
 use Devinweb\LaravelYoucanPay\Actions\CreateToken;
+use Devinweb\LaravelYoucanPay\Enums\YouCanPayStatus;
 use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
 use InvalidArgumentException;
 use Illuminate\Http\Request;
@@ -70,6 +71,9 @@ class TokenizationTest extends TestCase
     {
         [$request, $required_data, $token_id] = $this->initData();
         $token_id_generated = LaravelYoucanPay::createTokenization($required_data, $request)->getId();
+        $this->assertDatabaseHas('transactions', [
+            'status' => YouCanPayStatus::pending()
+        ]);
         $this->assertEquals($token_id_generated, $token_id);
     }
 
@@ -81,6 +85,9 @@ class TokenizationTest extends TestCase
     {
         [$request, $required_data, $token_id, $customer_info] = $this->initDataWithCustomerInfo();
         $token_id_generated = LaravelYoucanPay::setCustomerInfo($customer_info)->createTokenization($required_data, $request)->getId();
+        $this->assertDatabaseHas('transactions', [
+            'status' => YouCanPayStatus::pending(),
+        ]);
         $this->assertEquals($token_id_generated, $token_id);
     }
     
@@ -92,6 +99,9 @@ class TokenizationTest extends TestCase
     {
         [$request, $required_data, $token_id, $metadata] = $this->initDataWithMetadata();
         $token_id_generated = LaravelYoucanPay::setMetadata($metadata)->createTokenization($required_data, $request)->getId();
+        $this->assertDatabaseHas('transactions', [
+            'status' => YouCanPayStatus::pending(),
+        ]);
         $this->assertEquals($token_id_generated, $token_id);
     }
 
@@ -104,6 +114,9 @@ class TokenizationTest extends TestCase
         [$request, $required_data] = $this->initData();
         $payment_url = "https://youcanpay.com/sandbox/payment-form/token_id?lang=en";
         $url = LaravelYoucanPay::createTokenization($required_data, $request)->getPaymentURL();
+        $this->assertDatabaseHas('transactions', [
+            'status' => YouCanPayStatus::pending(),
+        ]);
         $this->assertEquals($url, $payment_url);
     }
 

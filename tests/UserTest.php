@@ -56,7 +56,10 @@ class UserTest extends TestCase
         );
 
         $token = $this->user->getPaymentToken($required_data, $request);
-
+        $this->assertDatabaseHas('transactions', [
+            'status' => YouCanPayStatus::pending(),
+            'user_id' => $this->user->id
+        ]);
         $this->assertEquals($token_id, $token);
     }
 
@@ -91,6 +94,10 @@ class UserTest extends TestCase
 
         $payment_url = "https://youcanpay.com/sandbox/payment-form/token_id?lang=en";
         $url = $this->user->getPaymentURL($required_data, $request);
+        $this->assertDatabaseHas('transactions', [
+            'status' => YouCanPayStatus::pending(),
+            'user_id' => $this->user->id
+        ]);
         $this->assertEquals($url, $payment_url);
     }
 
