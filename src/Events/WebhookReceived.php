@@ -1,6 +1,6 @@
 <?php
 
-namespace Devinweb\LaravelYoucanPay\Events;
+namespace Devinweb\LaravelYouCanPay\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;

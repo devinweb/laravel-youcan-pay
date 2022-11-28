@@ -1,6 +1,6 @@
 <?php
 
-namespace Devinweb\LaravelYoucanPay\Tests;
+namespace Devinweb\LaravelYouCanPay\Tests;
 
 use YouCan\Pay\Models\Token;
 

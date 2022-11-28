@@ -29,13 +29,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Devinweb\\LaravelYoucanPay\\": "src",
-            "Devinweb\\LaravelYoucanPay\\Database\\Factories\\": "database/factories/"
+            "Devinweb\\LaravelYouCanPay\\": "src",
+            "Devinweb\\LaravelYouCanPay\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Devinweb\\LaravelYoucanPay\\Tests\\": "tests"
+            "Devinweb\\LaravelYouCanPay\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -48,10 +48,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Devinweb\\LaravelYoucanPay\\Providers\\LaravelYoucanPayServiceProvider"
+                "Devinweb\\LaravelYouCanPay\\Providers\\LaravelYouCanPayServiceProvider"
             ],
             "aliases": {
-                "LaravelYoucanPay": "Devinweb\\LaravelYoucanPay\\Facades\\LaravelYoucanPay"
+                "LaravelYouCanPay": "Devinweb\\LaravelYouCanPay\\Facades\\LaravelYouCanPay"
             }
         }
     }

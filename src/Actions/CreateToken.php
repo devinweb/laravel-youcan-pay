@@ -1,5 +1,5 @@
 <?php
-namespace Devinweb\LaravelYoucanPay\Actions;
+namespace Devinweb\LaravelYouCanPay\Actions;
 
 use YouCan\Pay\YouCanPay;
 

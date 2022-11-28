@@ -13,11 +13,11 @@ return new class extends Migration {
     public function up()
     {
         Schema::create('transactions', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->uuid('id')->primary();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('name');
             $table->string('order_id')->unique();
-            $table->string('youcanpay_id')->unique();
+            $table->string('youcanpay_id')->nullable();
             $table->string('status');
             $table->string('price')->nullable();
             $table->string('refund')->nullable();

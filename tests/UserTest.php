@@ -1,13 +1,13 @@
 <?php
 
-namespace Devinweb\LaravelYoucanPay\Tests;
+namespace Devinweb\LaravelYouCanPay\Tests;
 
-use Devinweb\LaravelYoucanPay\Actions\CreateToken;
-use Devinweb\LaravelYoucanPay\Enums\YouCanPayStatus;
-use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
-use Devinweb\LaravelYoucanPay\Models\Transaction;
-use Devinweb\LaravelYoucanPay\Tests\Fixtures\User as FixturesUser;
-use Devinweb\LaravelYoucanPay\Traits\Billable;
+use Devinweb\LaravelYouCanPay\Actions\CreateToken;
+use Devinweb\LaravelYouCanPay\Enums\YouCanPayStatus;
+use Devinweb\LaravelYouCanPay\Facades\LaravelYouCanPay;
+use Devinweb\LaravelYouCanPay\Models\Transaction;
+use Devinweb\LaravelYouCanPay\Tests\Fixtures\User as FixturesUser;
+use Devinweb\LaravelYouCanPay\Traits\Billable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
@@ -33,7 +33,7 @@ class UserTest extends TestCase
      */
     public function test_user_can_generate_a_token()
     {
-        LaravelYoucanPay::useCustomerModel(FixturesUser::class);
+        LaravelYouCanPay::useCustomerModel(FixturesUser::class);
         $token_id = 'token_id';
 
         $required_data = [
@@ -56,7 +56,10 @@ class UserTest extends TestCase
         );
 
         $token = $this->user->getPaymentToken($required_data, $request);
-
+        $this->assertDatabaseHas('transactions', [
+            'status' => YouCanPayStatus::pending(),
+            'user_id' => $this->user->id
+        ]);
         $this->assertEquals($token_id, $token);
     }
 
@@ -66,7 +69,7 @@ class UserTest extends TestCase
      */
     public function test_user_can_generate_a_payment_url()
     {
-        LaravelYoucanPay::useCustomerModel(FixturesUser::class);
+        LaravelYouCanPay::useCustomerModel(FixturesUser::class);
 
         $token_id = 'token_id';
 
@@ -91,6 +94,10 @@ class UserTest extends TestCase
 
         $payment_url = "https://youcanpay.com/sandbox/payment-form/token_id?lang=en";
         $url = $this->user->getPaymentURL($required_data, $request);
+        $this->assertDatabaseHas('transactions', [
+            'status' => YouCanPayStatus::pending(),
+            'user_id' => $this->user->id
+        ]);
         $this->assertEquals($url, $payment_url);
     }
 
@@ -170,7 +177,7 @@ class UserTest extends TestCase
      */
     public function test_transactions()
     {
-        \Devinweb\LaravelYoucanPay\Tests\Fixtures\User::factory()
+        \Devinweb\LaravelYouCanPay\Tests\Fixtures\User::factory()
             ->has(Transaction::factory()->count(3))
             ->create();
 
@@ -183,7 +190,7 @@ class UserTest extends TestCase
      */
     public function test_transaction_owner()
     {
-        $user = \Devinweb\LaravelYoucanPay\Tests\Fixtures\User::factory()
+        $user = \Devinweb\LaravelYouCanPay\Tests\Fixtures\User::factory()
             ->has(Transaction::factory()->count(1))
             ->create();
 
@@ -201,7 +208,7 @@ class UserTest extends TestCase
      */
     public function test_user_transaction_status()
     {
-        $user = \Devinweb\LaravelYoucanPay\Tests\Fixtures\User::factory()
+        $user = \Devinweb\LaravelYouCanPay\Tests\Fixtures\User::factory()
             ->has(Transaction::factory()->count(1))
             ->create();
 
@@ -239,13 +246,13 @@ class UserTest extends TestCase
      */
     public function test_find_billable_from_order_id()
     {
-        $user = \Devinweb\LaravelYoucanPay\Tests\Fixtures\User::factory()
+        $user = \Devinweb\LaravelYouCanPay\Tests\Fixtures\User::factory()
             ->has(Transaction::factory()->count(1))
             ->create();
         
         $transaction = Transaction::first();
 
-        $billable = LaravelYoucanPay::findBillable($transaction->order_id);
+        $billable = LaravelYouCanPay::findBillable($transaction->order_id);
 
         $this->assertEquals($user->email, $billable->email);
     }

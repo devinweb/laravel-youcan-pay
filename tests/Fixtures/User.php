@@ -1,10 +1,10 @@
 <?php
 
-namespace Devinweb\LaravelYoucanPay\Tests\Fixtures;
+namespace Devinweb\LaravelYouCanPay\Tests\Fixtures;
 
-use Devinweb\LaravelYoucanPay\Database\Factories\UserFactory;
+use Devinweb\LaravelYouCanPay\Database\Factories\UserFactory;
 use Illuminate\Foundation\Auth\User as Model;
-use Devinweb\LaravelYoucanPay\Traits\Billable;
+use Devinweb\LaravelYouCanPay\Traits\Billable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class User extends Model

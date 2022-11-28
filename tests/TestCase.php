@@ -1,10 +1,10 @@
 <?php
 
-namespace Devinweb\LaravelYoucanPay\Tests;
+namespace Devinweb\LaravelYouCanPay\Tests;
 
-use Devinweb\LaravelYoucanPay\LaravelYoucanPay;
-use Devinweb\LaravelYoucanPay\Providers\LaravelYoucanPayServiceProvider;
-use Devinweb\LaravelYoucanPay\Tests\Fixtures\User;
+use Devinweb\LaravelYouCanPay\LaravelYouCanPay;
+use Devinweb\LaravelYouCanPay\Providers\LaravelYouCanPayServiceProvider;
+use Devinweb\LaravelYouCanPay\Tests\Fixtures\User;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase
@@ -23,18 +23,12 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function getPackageProviders($app)
     {
-        return [LaravelYoucanPayServiceProvider::class];
+        return [LaravelYouCanPayServiceProvider::class];
     }
 
     protected function getEnvironmentSetUp($app)
     {
-        // // import the CreatePostsTable class from the migration
-        // include_once __DIR__ . '/../database/migrations/2020_11_22_000001_create_transactions_table.php';
-
-        // // // run the up() method of that migration class
-        // (new \CreateTransactionsTable)->up();
-
-        LaravelYoucanPay::useCustomerModel(User::class);
+        LaravelYouCanPay::useCustomerModel(User::class);
     }
 
     protected function createCustomer($email = 'imad', array $options = []): User

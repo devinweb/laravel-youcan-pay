@@ -1,9 +1,9 @@
 <?php
 
-namespace Devinweb\LaravelYoucanPay\Http\Middleware;
+namespace Devinweb\LaravelYouCanPay\Http\Middleware;
 
 use Closure;
-use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
+use Devinweb\LaravelYouCanPay\Facades\LaravelYouCanPay;
 use Illuminate\Support\Facades\Log;
 
 class VerifyWebhookSignature
@@ -21,7 +21,7 @@ class VerifyWebhookSignature
     {
         $payload = json_decode($request->getContent(), true);
         $signature = $request->header('x-youcanpay-signature');
-        LaravelYoucanPay::validateWebhookSignature($signature, $payload);
+        LaravelYouCanPay::validateWebhookSignature($signature, $payload);
 
         return $next($request);
     }

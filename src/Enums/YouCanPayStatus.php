@@ -1,6 +1,6 @@
 <?php
 
-namespace Devinweb\LaravelYoucanPay\Enums;
+namespace Devinweb\LaravelYouCanPay\Enums;
 
 use Spatie\Enum\Enum;
 

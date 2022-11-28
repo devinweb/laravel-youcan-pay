@@ -1,9 +1,9 @@
 <?php
 
-namespace Devinweb\LaravelYoucanPay\Traits;
+namespace Devinweb\LaravelYouCanPay\Traits;
 
-use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
-use Devinweb\LaravelYoucanPay\Models\Transaction;
+use Devinweb\LaravelYouCanPay\Facades\LaravelYouCanPay;
+use Devinweb\LaravelYouCanPay\Models\Transaction;
 use InvalidArgumentException;
 use Illuminate\Http\Request;
 
@@ -74,15 +74,15 @@ trait Billable
     }
 
     /**
-     * Get an instance of LaravelYoucanPay
+     * Get an instance of LaravelYouCanPay
      *
      * @param array $data
      * @param Request $request
      * @param array $metadata
-     * @return \Devinweb\LaravelYoucanPay\LaravelYoucanPay
+     * @return \Devinweb\LaravelYouCanPay\LaravelYouCanPay
      */
     private function getInstance(array $data, Request $request, array $metadata=[])
     {
-        return LaravelYoucanPay::setCustomerInfo($this->getCustomerInfo())->setMetadata($metadata)->createTokenization($data, $request);
+        return LaravelYouCanPay::setCustomerInfo($this->getCustomerInfo())->setMetadata($metadata)->createTokenization($data, $request);
     }
 }

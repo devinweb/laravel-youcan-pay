@@ -2,10 +2,10 @@
 
 namespace Devinweb\LaravelYoucanPay\Http\Controllers;
 
-use Devinweb\LaravelYoucanPay\Enums\YouCanPayStatus;
-use Devinweb\LaravelYoucanPay\Events\WebhookReceived;
-use Devinweb\LaravelYoucanPay\LaravelYoucanPay;
-use Devinweb\LaravelYoucanPay\Models\Transaction;
+use Devinweb\LaravelYouCanPay\Enums\YouCanPayStatus;
+use Devinweb\LaravelYouCanPay\Events\WebhookReceived;
+use Devinweb\LaravelYouCanPay\LaravelYoucanPay;
+use Devinweb\LaravelYouCanPay\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
@@ -56,35 +56,56 @@ class WebHookController extends Controller
      */
     protected function handleTransactionPaid(array $payload)
     {
-        $customer = Arr::get($payload, 'payload.customer');
-        $transaction = Arr::get($payload, 'payload.transaction');
+        $this->createOrUpdate($payload, YouCanPayStatus::paid());
+    }
+    
+    /**
+     * Handle transaction failed webhook event.
+     *
+     * @param array $payload
+     * @return void
+     */
+    protected function handleTransactionFailed(array $payload)
+    {
+        $this->createOrUpdate($payload, YouCanPayStatus::failed());
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @param array $payload
+     * @param mixed $status
+     * @return bool
+     */
+    private function createOrUpdate(array $payload, $status)
+    {
+        $transaction_data = Arr::get($payload, 'payload.transaction');
+        $order_id = $transaction_data['order_id'];
         $youcanpay_id = Arr::get($payload, 'id');
+        $customer = Arr::get($payload, 'payload.customer');
         $user_model  = LaravelYoucanPay::$customerModel;
         $user = (new $user_model)->whereEmail($customer['email'])->first();
+        $transaction = Transaction::whereOrderId($order_id)->first();
 
-        Transaction::create([
+        if ($transaction) {
+            return $transaction->update([
+                'status' => $status,
+                'youcanpay_id' => $youcanpay_id,
+                'payload' => $payload
+            ]);
+        }
+       
+        
+        return Transaction::create([
             'user_id' => $user? $user->id : null,
             'name' => 'default',
-            'order_id' => $transaction['order_id'],
-            'status' => YouCanPayStatus::PAID(),
+            'order_id' => $transaction_data['order_id'],
+            'status' => $status,
             'youcanpay_id' => $youcanpay_id,
-            'price' => $transaction['amount'],
+            'price' => $transaction_data['amount'],
             'payload' => $payload
         ]);
     }
-    
-    // /**
-    //  * Handle transaction failed webhook event.
-    //  *
-    //  * @param array $payload
-    //  * @return void
-    //  */
-    // protected function handleTransactionFailed(array $payload)
-    // {
-    //     Log::info([
-    //        'failed' => $payload
-    //     ]);
-    // }
     
     // /**
     //  * Handle transaction refunded webhook event.
