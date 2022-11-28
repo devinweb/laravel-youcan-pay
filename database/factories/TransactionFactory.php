@@ -1,10 +1,10 @@
 <?php
 
-namespace Devinweb\LaravelYoucanPay\Database\Factories;
+namespace Devinweb\LaravelYouCanPay\Database\Factories;
 
-use Devinweb\LaravelYoucanPay\Enums\YouCanPayStatus;
-use Devinweb\LaravelYoucanPay\LaravelYoucanPay;
-use Devinweb\LaravelYoucanPay\Models\Transaction;
+use Devinweb\LaravelYouCanPay\Enums\YouCanPayStatus;
+use Devinweb\LaravelYouCanPay\LaravelYouCanPay;
+use Devinweb\LaravelYouCanPay\Models\Transaction;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -24,9 +24,10 @@ class TransactionFactory extends Factory
      */
     public function definition()
     {
-        $model = LaravelYoucanPay::$customerModel;
+        $model = LaravelYouCanPay::$customerModel;
 
         return [
+            // 'id' => Str::uuid()->toString(),
             (new $model)->getForeignKey() => ($model)::factory(),
             'name' => 'default',
             'order_id' => Str::random(40),

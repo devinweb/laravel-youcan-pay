@@ -1,19 +1,20 @@
 <?php
 
-namespace Devinweb\LaravelYoucanPay\Models;
+namespace Devinweb\LaravelYouCanPay\Models;
 
-use Devinweb\LaravelYoucanPay\Enums\YouCanPayStatus;
-use Devinweb\LaravelYoucanPay\LaravelYoucanPay;
+use Devinweb\LaravelYouCanPay\Traits\HasUniqID;
+use Devinweb\LaravelYouCanPay\Enums\YouCanPayStatus;
+use Devinweb\LaravelYouCanPay\LaravelYouCanPay;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Devinweb\LaravelYoucanPay\Database\Factories\TransactionFactory;
+use Devinweb\LaravelYouCanPay\Database\Factories\TransactionFactory;
 
 /**
  * @psalm-suppress PropertyNotSetInConstructor
  */
 class Transaction extends Model
 {
-    use HasFactory;
+    use HasUniqID, HasFactory;
 
     /**
      * The attributes that are not mass assignable.
@@ -22,6 +23,20 @@ class Transaction extends Model
      */
     protected $guarded = [];
 
+    /**
+     * Disable auto-increment.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
+     * Specify The type of the primary key ID..
+     *
+     * @var string
+     */
+    protected $keyType = 'string';
+    
     /**
      * The attributes that should be cast to native types.
      *
@@ -67,7 +82,7 @@ class Transaction extends Model
      */
     public function owner()
     {
-        $model = LaravelYoucanPay::$customerModel;
+        $model = LaravelYouCanPay::$customerModel;
 
         return $this->belongsTo($model, (new $model)->getForeignKey());
     }

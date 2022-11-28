@@ -1,14 +1,14 @@
 <?php
 
-namespace Devinweb\LaravelYoucanPay\Providers;
+namespace Devinweb\LaravelYouCanPay\Providers;
 
-use Devinweb\LaravelYoucanPay\Http\Middleware\VerifyWebhookSignature;
-use Devinweb\LaravelYoucanPay\LaravelYoucanPay;
+use Devinweb\LaravelYouCanPay\Http\Middleware\VerifyWebhookSignature;
+use Devinweb\LaravelYouCanPay\LaravelYouCanPay;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Routing\Router;
 
-class LaravelYoucanPayServiceProvider extends ServiceProvider
+class LaravelYouCanPayServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
@@ -65,7 +65,7 @@ class LaravelYoucanPayServiceProvider extends ServiceProvider
 
         // Register the main class to use with the facade
         $this->app->singleton('laravel-youcan-pay', function () {
-            return new LaravelYoucanPay;
+            return new LaravelYouCanPay;
         });
     }
 
@@ -79,7 +79,7 @@ class LaravelYoucanPayServiceProvider extends ServiceProvider
     {
         Route::group([
             'prefix' => 'youcanpay',
-            'namespace' => 'Devinweb\LaravelYoucanPay\Http\Controllers',
+            'namespace' => 'Devinweb\LaravelYouCanPay\Http\Controllers',
             'as' => 'youcanpay.',
         ], function () {
             $this->loadRoutesFrom(__DIR__.'/../../routes/web.php');

@@ -1,10 +1,10 @@
 <?php
 
-namespace Devinweb\LaravelYoucanPay\Tests;
+namespace Devinweb\LaravelYouCanPay\Tests;
 
-use Devinweb\LaravelYoucanPay\LaravelYoucanPay;
-use Devinweb\LaravelYoucanPay\Providers\LaravelYoucanPayServiceProvider;
-use Devinweb\LaravelYoucanPay\Tests\Fixtures\User;
+use Devinweb\LaravelYouCanPay\LaravelYouCanPay;
+use Devinweb\LaravelYouCanPay\Providers\LaravelYouCanPayServiceProvider;
+use Devinweb\LaravelYouCanPay\Tests\Fixtures\User;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase
@@ -23,12 +23,12 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function getPackageProviders($app)
     {
-        return [LaravelYoucanPayServiceProvider::class];
+        return [LaravelYouCanPayServiceProvider::class];
     }
 
     protected function getEnvironmentSetUp($app)
     {
-        LaravelYoucanPay::useCustomerModel(User::class);
+        LaravelYouCanPay::useCustomerModel(User::class);
     }
 
     protected function createCustomer($email = 'imad', array $options = []): User

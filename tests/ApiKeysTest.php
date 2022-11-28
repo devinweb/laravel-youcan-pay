@@ -1,8 +1,8 @@
 <?php
 
-namespace Devinweb\LaravelYoucanPay\Tests;
+namespace Devinweb\LaravelYouCanPay\Tests;
 
-use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
+use Devinweb\LaravelYouCanPay\Facades\LaravelYouCanPay;
 use Illuminate\Http\Request;
 
 class ApiKeysTest extends TestCase
@@ -28,7 +28,7 @@ class ApiKeysTest extends TestCase
      */
     public function test_pass()
     {
-        $result = LaravelYoucanPay::checkKeys($this->config['private_key'], $this->config['public_key']);
+        $result = LaravelYouCanPay::checkKeys($this->config['private_key'], $this->config['public_key']);
         $this->assertFalse($result);
     }
 }

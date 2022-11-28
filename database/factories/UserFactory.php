@@ -1,8 +1,8 @@
 <?php
 
-namespace Devinweb\LaravelYoucanPay\Database\Factories;
+namespace Devinweb\LaravelYouCanPay\Database\Factories;
 
-use Devinweb\LaravelYoucanPay\Tests\Fixtures\User;
+use Devinweb\LaravelYouCanPay\Tests\Fixtures\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 

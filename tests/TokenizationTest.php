@@ -1,10 +1,10 @@
 <?php
 
-namespace Devinweb\LaravelYoucanPay\Tests;
+namespace Devinweb\LaravelYouCanPay\Tests;
 
-use Devinweb\LaravelYoucanPay\Actions\CreateToken;
-use Devinweb\LaravelYoucanPay\Enums\YouCanPayStatus;
-use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
+use Devinweb\LaravelYouCanPay\Actions\CreateToken;
+use Devinweb\LaravelYouCanPay\Enums\YouCanPayStatus;
+use Devinweb\LaravelYouCanPay\Facades\LaravelYouCanPay;
 use InvalidArgumentException;
 use Illuminate\Http\Request;
 use Mockery;
@@ -40,7 +40,7 @@ class TokenizationTest extends TestCase
         ];
 
         try {
-            LaravelYoucanPay::createTokenization($required_data, $this->request);
+            LaravelYouCanPay::createTokenization($required_data, $this->request);
         } catch (InvalidArgumentException $e) {
             $this->assertStringContainsString('The order_id must be availabe in the array', $e->getMessage());
         }
@@ -57,7 +57,7 @@ class TokenizationTest extends TestCase
         ];
 
         try {
-            LaravelYoucanPay::createTokenization($required_data, $this->request);
+            LaravelYouCanPay::createTokenization($required_data, $this->request);
         } catch (InvalidArgumentException $e) {
             $this->assertStringContainsString('The amount must be availabe in the array', $e->getMessage());
         }
@@ -70,7 +70,7 @@ class TokenizationTest extends TestCase
     public function test_a_user_can_generate_token_from_required_attributes()
     {
         [$request, $required_data, $token_id] = $this->initData();
-        $token_id_generated = LaravelYoucanPay::createTokenization($required_data, $request)->getId();
+        $token_id_generated = LaravelYouCanPay::createTokenization($required_data, $request)->getId();
         $this->assertDatabaseHas('transactions', [
             'status' => YouCanPayStatus::pending()
         ]);
@@ -84,7 +84,7 @@ class TokenizationTest extends TestCase
     public function test_a_user_can_generate_token_from_required_attributes_and_customer_info()
     {
         [$request, $required_data, $token_id, $customer_info] = $this->initDataWithCustomerInfo();
-        $token_id_generated = LaravelYoucanPay::setCustomerInfo($customer_info)->createTokenization($required_data, $request)->getId();
+        $token_id_generated = LaravelYouCanPay::setCustomerInfo($customer_info)->createTokenization($required_data, $request)->getId();
         $this->assertDatabaseHas('transactions', [
             'status' => YouCanPayStatus::pending(),
         ]);
@@ -98,7 +98,7 @@ class TokenizationTest extends TestCase
     public function test_a_user_can_generate_token_from_required_attributes_and_metadata()
     {
         [$request, $required_data, $token_id, $metadata] = $this->initDataWithMetadata();
-        $token_id_generated = LaravelYoucanPay::setMetadata($metadata)->createTokenization($required_data, $request)->getId();
+        $token_id_generated = LaravelYouCanPay::setMetadata($metadata)->createTokenization($required_data, $request)->getId();
         $this->assertDatabaseHas('transactions', [
             'status' => YouCanPayStatus::pending(),
         ]);
@@ -113,7 +113,7 @@ class TokenizationTest extends TestCase
     {
         [$request, $required_data] = $this->initData();
         $payment_url = "https://youcanpay.com/sandbox/payment-form/token_id?lang=en";
-        $url = LaravelYoucanPay::createTokenization($required_data, $request)->getPaymentURL();
+        $url = LaravelYouCanPay::createTokenization($required_data, $request)->getPaymentURL();
         $this->assertDatabaseHas('transactions', [
             'status' => YouCanPayStatus::pending(),
         ]);

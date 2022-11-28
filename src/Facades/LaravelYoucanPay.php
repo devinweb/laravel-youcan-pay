@@ -1,13 +1,13 @@
 <?php
 
-namespace Devinweb\LaravelYoucanPay\Facades;
+namespace Devinweb\LaravelYouCanPay\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Devinweb\LaravelYoucanPay\Skeleton\SkeletonClass
+ * @see \Devinweb\LaravelYouCanPay\Skeleton\SkeletonClass
  */
-class LaravelYoucanPay extends Facade
+class LaravelYouCanPay extends Facade
 {
     /**
      * Get the registered name of the component.

@@ -1,8 +1,8 @@
 <?php
 
-namespace Devinweb\LaravelYoucanPay\Tests;
+namespace Devinweb\LaravelYouCanPay\Tests;
 
-use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
+use Devinweb\LaravelYouCanPay\Facades\LaravelYouCanPay;
 use YouCan\Pay\API\Exceptions\InvalidWebhookSignatureException;
 
 class WebHooksTest extends TestCase
@@ -26,7 +26,7 @@ class WebHooksTest extends TestCase
     {
         $payload = ['foo'=> 'bar'];
         $expectedSignature = "ceee75263456946bf35b87708bea371708ce0e31f4daf9e8b301c1e53e3e3b06";
-        $result = LaravelYoucanPay::verifyWebhookSignature($expectedSignature, $payload);
+        $result = LaravelYouCanPay::verifyWebhookSignature($expectedSignature, $payload);
         $this->assertTrue($result);
     }
     
@@ -38,7 +38,7 @@ class WebHooksTest extends TestCase
     {
         $payload = ['foo'=> 'bar'];
         $expectedSignature = "1234";
-        $result = LaravelYoucanPay::verifyWebhookSignature($expectedSignature, $payload);
+        $result = LaravelYouCanPay::verifyWebhookSignature($expectedSignature, $payload);
         $this->assertFalse($result);
     }
 
@@ -50,7 +50,7 @@ class WebHooksTest extends TestCase
     {
         $payload = ['foo'=> 'bar'];
         $expectedSignature = "ceee75263456946bf35b87708bea371708ce0e31f4daf9e8b301c1e53e3e3b06";
-        $result = LaravelYoucanPay::validateWebhookSignature($expectedSignature, $payload);
+        $result = LaravelYouCanPay::validateWebhookSignature($expectedSignature, $payload);
         $this->assertNull($result);
     }
     
@@ -64,7 +64,7 @@ class WebHooksTest extends TestCase
         $expectedSignature = "1234";
         
         try {
-            LaravelYoucanPay::validateWebhookSignature($expectedSignature, $payload);
+            LaravelYouCanPay::validateWebhookSignature($expectedSignature, $payload);
         } catch (InvalidWebhookSignatureException $e) {
             $this->assertStringContainsString('invalid webhook signature', $e->getMessage());
         }

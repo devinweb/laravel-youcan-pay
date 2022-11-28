@@ -75,7 +75,7 @@ If you want the package to manage the transactions based on the user model, add 
 This trait provides various methods to perform transaction tasks, such as creating a transaction, getting `paid`, `failed` and `pending` transactions.
 
 ```php
-use Devinweb\LaravelYoucanPay\Traits\Billable;
+use Devinweb\LaravelYouCanPay\Traits\Billable;
 
 class User extends Authenticatable
 {
@@ -83,12 +83,12 @@ class User extends Authenticatable
 }
 ```
 
-LaravelYoucanPay assumes your user model will be `App\Models\User`, if you use a different user model namespace you should specify it using the method `useCustomerModel` method.
+LaravelYouCanPay assumes your user model will be `App\Models\User`, if you use a different user model namespace you should specify it using the method `useCustomerModel` method.
 This method should typically be called in the boot method of your `AppServiceProvider` class
 
 ```php
 use App\Models\Core\User;
-use Devinweb\LaravelYoucanPay\LaravelYoucanPay;;
+use Devinweb\LaravelYouCanPay\LaravelYouCanPay;;
 
 /**
  * Bootstrap any application services.
@@ -97,7 +97,7 @@ use Devinweb\LaravelYoucanPay\LaravelYoucanPay;;
  */
 public function boot()
 {
-    LaravelYoucanPay::useCustomerModel(User::class);
+    LaravelYouCanPay::useCustomerModel(User::class);
 }
 ```
 
@@ -147,9 +147,9 @@ You can retrieve a customer by their YouCanPay ID using the `findBillable` metho
 
 ```php
 
-use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
+use Devinweb\LaravelYouCanPay\Facades\LaravelYouCanPay;
 
-$user = LaravelYoucanPay::findBillable($order_id);
+$user = LaravelYouCanPay::findBillable($order_id);
 
 ```
 
@@ -206,7 +206,7 @@ The first step we need is to create a token based on the credentails get it from
 
 ```php
 
-use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
+use Devinweb\LaravelYouCanPay\Facades\LaravelYouCanPay;
 use Illuminate\Support\Str;
 
 
@@ -217,7 +217,7 @@ public function tokenization(Request $request)
         'amount' => 200
     ];
 
-    $token= LaravelYoucanPay::createTokenization($order_data, $request)->getId();
+    $token= LaravelYouCanPay::createTokenization($order_data, $request)->getId();
     $public_key = config('youcanpay.public_key');
     $isSandbox = config('youcanpay.sandboxMode');
     $language = config('app.locale');
@@ -236,7 +236,7 @@ public function tokenization(Request $request)
 Standalone Integration, you can generate the payment url using the method `getPaymentUrl()`
 
 ```php
-$paymentUrl= LaravelYoucanPay::createTokenization($data, $request)->getPaymentURL();
+$paymentUrl= LaravelYouCanPay::createTokenization($data, $request)->getPaymentURL();
 ```
 
 Then you can put that url in your html page
@@ -250,7 +250,7 @@ Then you can put that url in your html page
 If you need to add the customer data during the tokenization, Please keep these array keys(`name`, `address`, `zip_code`, `city`, `state`, `country_code`, `phone` and `email`). you can use
 
 ```php
-use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
+use Devinweb\LaravelYouCanPay\Facades\LaravelYouCanPay;
 
 $customerInfo = [
   'name'         => '',
@@ -263,7 +263,7 @@ $customerInfo = [
   'email'        => '',
 ];
 
-$token= LaravelYoucanPay::setCustomerInfo($customerInfo)->createTokenization($data, $request)->getId();
+$token= LaravelYouCanPay::setCustomerInfo($customerInfo)->createTokenization($data, $request)->getId();
 ```
 
 #### Metadata
@@ -271,7 +271,7 @@ $token= LaravelYoucanPay::setCustomerInfo($customerInfo)->createTokenization($da
 You can use the metadata to send data that can be retrieved after the response or in the webhook.
 
 ```php
-use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
+use Devinweb\LaravelYouCanPay\Facades\LaravelYouCanPay;
 
 $customerInfo = [
   'name'         => '',
@@ -289,7 +289,7 @@ $metadata = [
   'key' => 'value'
 ];
 
-$token= LaravelYoucanPay::setMetadata($metadata)
+$token= LaravelYouCanPay::setMetadata($metadata)
                           ->setCustomerInfo($customerInfo)
                           ->createTokenization($data, $request)->getId();
 ```
@@ -412,7 +412,7 @@ class WebHookController extends Controller
 
 LaravelYouCanPay handles the common YouCanPay webhook events, if you need to handle the webhook events that you need you can listen to the event that is dispatched by the package.
 
-- Devinweb\LaravelYoucanPay\Events\WebhookReceived
+- Devinweb\LaravelYouCanPay\Events\WebhookReceived
 
 You need to register a listener that can handle the event:
 
@@ -421,14 +421,14 @@ You need to register a listener that can handle the event:
 
 namespace App\Listeners;
 
-use Devinweb\LaravelYoucanPay\Events\WebhookReceived;
+use Devinweb\LaravelYouCanPay\Events\WebhookReceived;
 
 class YouCanPayEventListener
 {
     /**
      * Handle received Stripe webhooks.
      *
-     * @param  \Devinweb\LaravelYoucanPay\Events\WebhookReceived  $event
+     * @param  \Devinweb\LaravelYouCanPay\Events\WebhookReceived  $event
      * @return void
      */
     public function handle(WebhookReceived $event)
@@ -450,7 +450,7 @@ namespace App\Providers;
 
 use App\Listeners\YouCanPayEventListener;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Devinweb\LaravelYoucanPay\Events\WebhookReceived;
+use Devinweb\LaravelYouCanPay\Events\WebhookReceived;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -526,7 +526,7 @@ To verify the webhook signature before processing any logic or action.
 
 namespace App\Http\Controllers;
 
-use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
+use Devinweb\LaravelYouCanPay\Facades\LaravelYouCanPay;
 use Illuminate\Http\Request;
 
 class YouCanPayWebhooksController extends Controller
@@ -535,7 +535,7 @@ class YouCanPayWebhooksController extends Controller
     {
         $signature = $request->header('x-youcanpay-signature');
         $payload = json_decode($request->getContent(), true);
-        if (LaravelYoucanPay::verifyWebhookSignature($signature, $payload)) {
+        if (LaravelYouCanPay::verifyWebhookSignature($signature, $payload)) {
             // you code here
         }
     }
@@ -551,14 +551,14 @@ The validation has the same impact as the verification, but the validation throw
 
 namespace App\Http\Controllers;
 
-use Devinweb\LaravelYoucanPay\Facades\LaravelYoucanPay;
+use Devinweb\LaravelYouCanPay\Facades\LaravelYouCanPay;
 use Illuminate\Http\Request;
 
 class YouCanPayWebhooksController extends Controller
 {
     public function handle(Request $request)
     {
-        LaravelYoucanPay::validateWebhookSignature($signature, $payload)
+        LaravelYouCanPay::validateWebhookSignature($signature, $payload)
 
         // you code here
     }

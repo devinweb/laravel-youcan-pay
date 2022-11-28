@@ -1,16 +1,16 @@
 <?php
 
-namespace Devinweb\LaravelYoucanPay;
+namespace Devinweb\LaravelYouCanPay;
 
-use Devinweb\LaravelYoucanPay\Actions\CreateToken;
-use Devinweb\LaravelYoucanPay\Enums\YouCanPayStatus;
-use Devinweb\LaravelYoucanPay\Models\Transaction;
+use Devinweb\LaravelYouCanPay\Actions\CreateToken;
+use Devinweb\LaravelYouCanPay\Enums\YouCanPayStatus;
+use Devinweb\LaravelYouCanPay\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use YouCan\Pay\YouCanPay;
 
-class LaravelYoucanPay
+class LaravelYouCanPay
 {
     /**
      * const REQUIRED_FIELD, defines the fields required during tokenization
