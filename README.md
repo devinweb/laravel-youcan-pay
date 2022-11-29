@@ -31,6 +31,7 @@
     - [Webhooks Events]()
     - [Verify webhook signature manually](#Verify-webhook-signature)
     - [Validate webhook signature manually](#validate-webhook-signature)
+  - [Commands](#commands)
 - [Testing and test cards](#Testing-and-test-cards)
 
 ## Introduction
@@ -564,6 +565,16 @@ class YouCanPayWebhooksController extends Controller
     }
 }
 ```
+
+### Commands
+
+If you need to clean the pending transactions, there's a command
+
+```shell
+php artisan youcanpay:clean-pending-transactions
+```
+
+You can add it to the scheduler that can run the command every single time, so the clean will be automatic and depend on the `tolerance` value that is defined in the `youcanpay` config file.
 
 ## Testing and test cards
 
