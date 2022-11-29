@@ -21,6 +21,7 @@ class LaravelYouCanPayServiceProvider extends ServiceProvider
         $this->registerRoutes();
         $this->registerMigrations();
         $this->registerPublishing();
+        $this->registerCommands();
     }
 
     /**
