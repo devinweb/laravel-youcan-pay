@@ -37,4 +37,19 @@ class TransactionFactory extends Factory
             'payload'=> []
         ];
     }
+
+
+    /**
+     * Indicate that the transaction is pending.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function pending()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'status' => YouCanPayStatus::pending(),
+            ];
+        });
+    }
 }
