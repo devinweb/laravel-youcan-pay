@@ -2,6 +2,7 @@
 
 namespace Devinweb\LaravelYouCanPay\Providers;
 
+use Devinweb\LaravelYouCanPay\Console\CleanPendingTransactionCommand;
 use Devinweb\LaravelYouCanPay\Http\Middleware\VerifyWebhookSignature;
 use Devinweb\LaravelYouCanPay\LaravelYouCanPay;
 use Illuminate\Support\ServiceProvider;
@@ -95,5 +96,19 @@ class LaravelYouCanPayServiceProvider extends ServiceProvider
     {
         $router = $this->app->make(Router::class);
         $router->aliasMiddleware('verify-youcanpay-webhook-signature', VerifyWebhookSignature::class);
+    }
+
+    /**
+     * Register the package's commands.
+     *
+     * @return void
+     */
+    protected function registerCommands()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                CleanPendingTransactionCommand::class,
+            ]);
+        }
     }
 }
