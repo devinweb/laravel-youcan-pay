@@ -4,9 +4,6 @@ namespace Devinweb\LaravelYouCanPay\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-/**
- * @see \Devinweb\LaravelYouCanPay\Skeleton\SkeletonClass
- */
 class LaravelYouCanPay extends Facade
 {
     /**

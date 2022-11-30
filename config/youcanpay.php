@@ -15,6 +15,15 @@ return [
     
     "success_redirect_uri" => env("SUCCCESS_REDIRECT_URI"),
     
-    "fail_redirect_uri" => env("FAIL_REDIRECT_URI")
+    "fail_redirect_uri" => env("FAIL_REDIRECT_URI"),
+
+    /*
+     * The tolerance value at which to look to the old pending transactions,
+     * and remove them from the database.
+     * By default it's set to 48 hours
+     */
+    "transaction" => [
+        "tolerance" => env('TRANSACTION_TOLERANCE', 60 * 60 * 48),
+    ]
 
 ];
