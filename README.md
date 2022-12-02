@@ -612,6 +612,6 @@ If you discover any security related issues, please email imad@devinweb.com inst
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 
-## Laravel Package Boilerplate
+## Laravel YouCanPay Boilerplate
 
-This package was generated using the [Laravel Package Boilerplate](https://laravelpackageboilerplate.com).
+This package was generated using the [Laravel YouCanPay Boilerplate](https://github.com/devinweb/laravel-youcan-pay-boilerplate).
