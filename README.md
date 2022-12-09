@@ -28,7 +28,7 @@
   - [Generate Payment form](#generate-payment-form)
   - [Handling YouCanPay Webhooks](#Handling-YouCanPay-Webhooks)
     - [Webhooks URl](#Webhooks-URl)
-    - [Webhooks Events](#Webhooks-Events)
+    - [Webhook Events](#Webhook-Events)
     - [Verify webhook signature manually](#Verify-webhook-signature-manually)
     - [Validate webhook signature manually](#validate-webhook-signature-manually)
   - [Commands](#commands)
