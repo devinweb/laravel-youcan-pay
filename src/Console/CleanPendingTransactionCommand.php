@@ -33,7 +33,7 @@ class CleanPendingTransactionCommand extends Command
 
         $transactions = Transaction::whereStatus(YouCanPayStatus::pending())
                                 ->where('created_at', '<=', Carbon::now())
-                                ->where('created_at', '>=', Carbon::now()->subSeconds($tolerance ?? 60*60*24))
+                                ->where('created_at', '<=', Carbon::now()->subSeconds($tolerance ?? 60*60*24))
                                 ->get();
         
         foreach ($transactions as $transaction) {

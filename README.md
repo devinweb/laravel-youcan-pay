@@ -27,10 +27,10 @@
     - [Metadata](#Metadata)
   - [Generate Payment form](#generate-payment-form)
   - [Handling YouCanPay Webhooks](#Handling-YouCanPay-Webhooks)
-    - [Webhooks URl]()
-    - [Webhooks Events]()
-    - [Verify webhook signature manually](#Verify-webhook-signature)
-    - [Validate webhook signature manually](#validate-webhook-signature)
+    - [Webhooks URl](#Webhooks-URl)
+    - [Webhook Events](#Webhook-Events)
+    - [Verify webhook signature manually](#Verify-webhook-signature-manually)
+    - [Validate webhook signature manually](#validate-webhook-signature-manually)
   - [Commands](#commands)
 - [Testing and test cards](#Testing-and-test-cards)
 
@@ -612,6 +612,6 @@ If you discover any security related issues, please email imad@devinweb.com inst
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 
-## Laravel Package Boilerplate
+## Laravel YouCanPay Boilerplate
 
-This package was generated using the [Laravel Package Boilerplate](https://laravelpackageboilerplate.com).
+This package was generated using the [Laravel YouCanPay Boilerplate](https://github.com/devinweb/laravel-youcan-pay-boilerplate).
