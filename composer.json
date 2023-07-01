@@ -5,7 +5,7 @@
         "devinweb",
         "laravel-youcan-pay"
     ],
-    "version": "1.1.0",
+    "version": "0.4.3",
     "homepage": "https://github.com/devinweb/laravel-youcan-pay",
     "license": "MIT",
     "type": "library",
